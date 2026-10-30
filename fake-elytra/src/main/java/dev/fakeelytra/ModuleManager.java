@@ -19,11 +19,11 @@ public final class ModuleManager {
 
     public static final FeatureModule FAKE_ELYTRA = new FeatureModule(
             "fake_elytra", "Fake Elytra",
-            "Glide and use fireworks without wearing an elytra.", FeatureModule.Category.MOVEMENT);
+            "Glide without an elytra.", FeatureModule.Category.MOVEMENT);
 
     public static final FeatureModule GLIDE_BOOST = new FeatureModule(
             "glide_boost", "Glide Boost",
-            "Gentle speed boost while you are gliding.", FeatureModule.Category.MOVEMENT);
+            "Speed boost while gliding.", FeatureModule.Category.MOVEMENT);
 
     public static final FeatureModule NIGHT_VISION = new FeatureModule(
             "night_vision", "Night Vision",
@@ -31,7 +31,7 @@ public final class ModuleManager {
 
     public static final FeatureModule SPAWNER_DEMO = new FeatureModule(
             "spawner_demo", "Spawner Demo",
-            "Right-click a spawner block for a skeleton spawner menu (demo).", FeatureModule.Category.VISUALS);
+            "Spawner right-click menu.", FeatureModule.Category.VISUALS);
 
     public static final List<FeatureModule> ALL = List.of(FAKE_ELYTRA, GLIDE_BOOST, NIGHT_VISION, SPAWNER_DEMO);
 
