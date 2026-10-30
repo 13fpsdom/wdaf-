@@ -110,15 +110,25 @@ public class FakeElytraClient implements ClientModInitializer {
         // (Backup for vanilla's own check, which may skip players without a real elytra.)
         boolean jumpDown = mc.options.keyJump.isDown();
         airborneTicks = player.onGround() ? 0 : airborneTicks + 1;
-        if (ModuleManager.FAKE_ELYTRA.isEnabled()
-                && jumpDown && !jumpWasDown
-                && airborneTicks >= 2
-                && mc.screen == null
-                && !player.isFallFlying()
-                && !player.getAbilities().flying
-                && player.tryToStartFallFlying()) {
-            player.connection.send(new ServerboundPlayerCommandPacket(
-                    player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
+        if (ModuleManager.FAKE_ELYTRA.isEnabled() && jumpDown && !jumpWasDown && !player.onGround()) {
+            boolean started = false;
+            if (airborneTicks >= 2
+                    && mc.screen == null
+                    && !player.isFallFlying()
+                    && !player.getAbilities().flying) {
+                started = player.tryToStartFallFlying();
+                if (started) {
+                    player.connection.send(new ServerboundPlayerCommandPacket(
+                            player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
+                }
+            }
+            // TEMPORARY debug line (shows above the hotbar) so we can see which step fails
+            player.displayClientMessage(Component.literal(
+                    "FE debug: air=" + airborneTicks
+                            + " canGlide=" + player.canGlide()
+                            + " started=" + started
+                            + " gliding=" + player.isFallFlying()
+                            + " flying=" + player.getAbilities().flying), true);
         }
         jumpWasDown = jumpDown;
 
