@@ -49,17 +49,15 @@ public class SpawnerScreen extends Screen {
         this.addRenderableWidget(takeButton);
         this.addRenderableWidget(xpButton);
 
-        this.addRenderableWidget(Button.builder(Component.literal("Stack -"),
-                        b -> sim.setStackSize(sim.stackSize() - step(), System.currentTimeMillis()))
-                .bounds(left + 8, y2, bw, 20).build());
-        this.addRenderableWidget(Button.builder(Component.literal("Stack +"),
-                        b -> sim.setStackSize(sim.stackSize() + step(), System.currentTimeMillis()))
-                .bounds(left + 8 + bw + 4, y2, bw, 20).build());
-    }
-
-    /** Hold shift for bigger steps. */
-    private int step() {
-        return Screen.hasShiftDown() ? 10 : 1;
+        // Stack size: -10, -1, +1, +10
+        int[] deltas = {-10, -1, 1, 10};
+        for (int i = 0; i < deltas.length; i++) {
+            final int delta = deltas[i];
+            String label = (delta > 0 ? "+" : "") + delta;
+            this.addRenderableWidget(Button.builder(Component.literal(label),
+                            b -> sim.setStackSize(sim.stackSize() + delta, System.currentTimeMillis()))
+                    .bounds(left + 8 + i * 40, y2, 38, 20).build());
+        }
     }
 
     @Override
