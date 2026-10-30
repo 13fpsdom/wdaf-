@@ -28,4 +28,7 @@ jobs:
     defaults:
       run:
         working-directory: fake-elytra
+                  path: |
+            fake-elytra/build/libs/*.jar
+            !fake-elytra/build/libs/*-sources.jar
           
