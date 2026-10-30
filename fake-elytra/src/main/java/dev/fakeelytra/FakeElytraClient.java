@@ -13,6 +13,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Blocks;
@@ -32,6 +33,8 @@ public class FakeElytraClient implements ClientModInitializer {
             FabricLoader.getInstance().getConfigDir().resolve("fakeelytra.properties");
 
     private volatile boolean openMenuNextTick = false;
+    private boolean jumpWasDown = false;
+    private int airborneTicks = 0;
     private boolean nightVisionApplied = false;
     private final Map<Long, SpawnerSim> spawners = new HashMap<>();
 
@@ -102,6 +105,22 @@ public class FakeElytraClient implements ClientModInitializer {
             nightVisionApplied = false;
             return;
         }
+
+        // Fake Elytra: start gliding on a second jump press in mid-air.
+        // (Backup for vanilla's own check, which may skip players without a real elytra.)
+        boolean jumpDown = mc.options.keyJump.isDown();
+        airborneTicks = player.onGround() ? 0 : airborneTicks + 1;
+        if (ModuleManager.FAKE_ELYTRA.isEnabled()
+                && jumpDown && !jumpWasDown
+                && airborneTicks >= 2
+                && mc.screen == null
+                && !player.isFallFlying()
+                && !player.getAbilities().flying
+                && player.tryToStartFallFlying()) {
+            player.connection.send(new ServerboundPlayerCommandPacket(
+                    player, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
+        }
+        jumpWasDown = jumpDown;
 
         // Glide Boost: small push along your look direction while gliding
         if (ModuleManager.GLIDE_BOOST.isEnabled() && player.isFallFlying()) {
