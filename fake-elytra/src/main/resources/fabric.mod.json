@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "fakeelytra",
+  "version": "${version}",
+  "name": "Fake Elytra",
+  "description": "Singleplayer-only: glide and use fireworks without wearing an elytra. Toggle with /fakeelytra.",
+  "authors": ["You"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.fakeelytra.FakeElytraClient"]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.10",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
