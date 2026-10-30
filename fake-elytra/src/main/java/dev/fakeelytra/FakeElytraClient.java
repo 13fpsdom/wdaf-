@@ -31,6 +31,7 @@ public class FakeElytraClient implements ClientModInitializer {
     public static final Path CONFIG_PATH =
             FabricLoader.getInstance().getConfigDir().resolve("fakeelytra.properties");
 
+    private volatile boolean openMenuNextTick = false;
     private boolean nightVisionApplied = false;
     private final Map<Long, SpawnerSim> spawners = new HashMap<>();
 
@@ -41,9 +42,9 @@ public class FakeElytraClient implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
                 dispatcher.register(ClientCommandManager.literal("fakeelytra")
                         .executes(ctx -> {
-                            Minecraft mc = Minecraft.getInstance();
-                            // Open on the next tick, after the chat screen has closed
-                            mc.execute(() -> mc.setScreen(new ModulesScreen()));
+                            // The chat screen closes itself right after a command runs, which
+                            // would close our menu too. So just flag it and open it next tick.
+                            openMenuNextTick = true;
                             return 1;
                         })
                         .then(ClientCommandManager.literal("toggle")
@@ -87,6 +88,11 @@ public class FakeElytraClient implements ClientModInitializer {
     }
 
     private void onTick(Minecraft mc) {
+        if (openMenuNextTick) {
+            openMenuNextTick = false;
+            mc.setScreen(new ModulesScreen());
+        }
+
         LocalPlayer player = mc.player;
         boolean singleplayer = player != null && mc.getSingleplayerServer() != null;
 
